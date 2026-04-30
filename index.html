@@ -649,23 +649,18 @@ async function syncNow() {
 
   setSyncUI('syncing','sincronizando...');
   try {
-    const res = await fetch(cfg.url, {
-      method: 'POST',
-      body: JSON.stringify({ movimientos: un }),
-    });
-    if (res.ok) {
-      const ids = un.map(m => m.id);
-      const movs = getMovs();
-      movs.forEach(m => { if (ids.includes(m.id)) m.synced = true; });
-      save(K.movs, movs);
-      save(K.unsynced, []);
-      setSyncUI('ok','sincronizado');
-      if (curView === 'Resumen')   renderResumen();
-      if (curView === 'Historial') renderHistorial();
-      if (curView === 'Config')    renderConfig();
-    } else {
-      setSyncUI('err','error sync');
-    }
+    const form = new FormData();
+    form.append('movimientos', JSON.stringify(un));
+    await fetch(cfg.url, { method: 'POST', body: form });
+    const ids = un.map(m => m.id);
+    const movs = getMovs();
+    movs.forEach(m => { if (ids.includes(m.id)) m.synced = true; });
+    save(K.movs, movs);
+    save(K.unsynced, []);
+    setSyncUI('ok','sincronizado');
+    if (curView === 'Resumen')   renderResumen();
+    if (curView === 'Historial') renderHistorial();
+    if (curView === 'Config')    renderConfig();
   } catch {
     setSyncUI('err','error red');
   }
