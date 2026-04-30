@@ -652,7 +652,6 @@ async function syncNow() {
     const res = await fetch(cfg.url, {
       method: 'POST',
       body: JSON.stringify({ movimientos: un }),
-      headers: { 'Content-Type':'application/json' },
     });
     if (res.ok) {
       const ids = un.map(m => m.id);
